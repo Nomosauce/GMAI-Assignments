@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChefIdleState : ChefBaseState
+public class ChefQuestState : ChefBaseState
 {
     //constructor pass reference to fsm when state is instantiated so fsm(variable) wont be null whenever states use fsm variables
-    public ChefIdleState(ChefBotFSM _fsm)
+    public ChefQuestState(ChefBotFSM _fsm)
     {
         fsm = _fsm;
     }
@@ -13,21 +13,23 @@ public class ChefIdleState : ChefBaseState
     //methods inherited from the abstract class are overridden to give the state functionality
     public override void OnEnter()
     {
-        Debug.Log("IDLE: Rest/Do nothing");
+        Debug.Log("QUEST: Follow Player until quest is done");
     }
 
     public override void OnUpdate()
     {
-        if (playerIsNear()) //transition condition - go to the approach state when this is true
+        if (finishQuest()) //transition condition - go back to idle state once quest finish
         {
-            fsm.SwitchState(fsm.approachState);
+            Debug.Log("Quest is done");
+            fsm.questDone = true; //set the quest done bool to true so the condition is met
+            fsm.SwitchState(fsm.idleState);
         }
     }
 
     public override void OnExit()
     { }
 
-    private bool playerIsNear() //returns either true or false
+    private bool finishQuest()
     {
         if (Random.Range(0, 10) >= 5f) //random no. is picked from 0-10, if its 2 or more, returns true
         {

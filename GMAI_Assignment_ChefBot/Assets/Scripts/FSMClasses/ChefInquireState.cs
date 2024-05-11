@@ -13,26 +13,37 @@ public class ChefInquireState : ChefBaseState
     //methods inherited from the abstract class are overridden to give the state functionality
     public override void OnEnter()
     {
-        Debug.Log("INQUIRE: Wait for Player input \nPress 1 - Quest \nPress 2 - Food \nPress 3 - Drink \nPress 4 - Cancel");
+        if (!fsm.questDone) //if quest has not been done, quest option is available - once done, option is unavailable anymore
+        {
+            Debug.Log("INQUIRE: Wait for Player input \nPress 1 - FOOD \nPress 2 - DRINK \nPress 3 - QUEST \nPress SPACE - Cancel");
+        }
+        else
+        {
+            Debug.Log("INQUIRE: Wait for Player input \nPress 1 - FOOD \nPress 2 - DRINK \nPress SPACE - Cancel");
+        }
     }
 
     public override void OnUpdate()
     {
+        //transition to other states with players input being the condition
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            Debug.Log("You picked QUEST");
+            Debug.Log("You picked FOOD");
+            fsm.SwitchState(fsm.prepareFoodState);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            Debug.Log("You picked FOOD");
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
             Debug.Log("You picked DRINK");
+            fsm.SwitchState(fsm.prepareDrinkState);
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        else if (!fsm.questDone && Input.GetKeyDown(KeyCode.Alpha3))
         {
-            Debug.Log("CANCEL");
+            Debug.Log("You picked QUEST");
+            fsm.SwitchState(fsm.questState);
+        }
+        else if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("Cancel");
             fsm.SwitchState(fsm.approachState);
         }
     }
