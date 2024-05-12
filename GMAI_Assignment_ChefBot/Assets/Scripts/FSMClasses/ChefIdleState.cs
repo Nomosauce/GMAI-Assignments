@@ -14,6 +14,7 @@ public class ChefIdleState : ChefBaseState
     public override void OnEnter()
     {
         Debug.Log("IDLE: Rest/Do nothing");
+        fsm.addToStress(0.1f);
     }
 
     public override void OnUpdate()
@@ -29,7 +30,7 @@ public class ChefIdleState : ChefBaseState
 
     private bool playerIsNear() //returns either true or false
     {
-        if (Random.Range(0, 10) >= 5f) //random no. is picked from 0-10, if its 2 or more, returns true
+        if (Random.Range(0, 10) >= 2f) //random no. is picked from 0-10, if its 2 or more, returns true
         {
             return true;
         }

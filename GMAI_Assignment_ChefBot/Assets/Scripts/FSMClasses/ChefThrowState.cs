@@ -14,11 +14,12 @@ public class ChefThrowState : ChefBaseState
     public override void OnEnter()
     {
         Debug.Log("THROW: Throw burnt/spoiled food away");
+        fsm.addToStress(0.2f);
     }
 
     public override void OnUpdate()
     {
-        if (foodThrown())
+        if (foodThrown()) //transition condition - if food is burnt/spoiled, go to throw state
         {
             fsm.SwitchState(fsm.prepareFoodState);
         }

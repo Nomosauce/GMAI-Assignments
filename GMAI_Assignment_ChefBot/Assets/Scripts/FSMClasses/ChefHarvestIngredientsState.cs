@@ -16,6 +16,7 @@ public class ChefHarvestIngredientsState : ChefBaseState
     public override void OnEnter()
     {
         Debug.Log("HARVEST_INGREDIENTS: Harvest crops and animals");
+        fsm.addToStress(0.5f);
         ingredientsRefilled = false;
     }
 

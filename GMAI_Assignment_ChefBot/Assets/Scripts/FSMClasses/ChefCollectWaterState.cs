@@ -16,6 +16,7 @@ public class ChefCollectWaterState : ChefBaseState
     public override void OnEnter()
     {
         Debug.Log("COLLECT_WATER: Get more water from a well");
+        fsm.addToStress(0.5f);
         waterRefilled = false;
     }
 

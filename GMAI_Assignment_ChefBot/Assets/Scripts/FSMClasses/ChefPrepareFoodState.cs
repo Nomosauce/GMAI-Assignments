@@ -14,6 +14,7 @@ public class ChefPrepareFoodState : ChefBaseState
     public override void OnEnter()
     {
         Debug.Log("PREPARE_FOOD: Take ingredients from kitchen and cook them into food");
+        fsm.addToStress(0.2f);
 
         if (fsm.ingredientsLeft > 0) //only deduct from ingredients supply when the supply is above 0
         {
@@ -23,6 +24,7 @@ public class ChefPrepareFoodState : ChefBaseState
         else //transition condition - at 0 (or below), go harvest ingredient state for refill
         {
             Debug.Log("No more meat/crops!");
+            fsm.addToStress(0.2f);
             fsm.SwitchState(fsm.harvestIngredientsState);
         }
     }

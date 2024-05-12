@@ -14,6 +14,7 @@ public class ChefPrepareDrinkState : ChefBaseState
     public override void OnEnter()
     {
         Debug.Log("PREPARE_DRINK: Make drink");
+        fsm.addToStress(0.2f);
 
         if (fsm.waterLeft > 0) //only deduct from water supply when the supply is above 0
         {
@@ -23,6 +24,7 @@ public class ChefPrepareDrinkState : ChefBaseState
         else //transition condition - at 0 (or below), go collect water state for refill
         {
             Debug.Log("No more water!");
+            fsm.addToStress(0.2f);
             fsm.SwitchState(fsm.collectWaterState);
         }
     }
