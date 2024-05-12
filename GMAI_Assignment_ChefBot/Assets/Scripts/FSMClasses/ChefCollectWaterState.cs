@@ -15,6 +15,7 @@ public class ChefCollectWaterState : ChefBaseState
     //methods inherited from the abstract class are overridden to give the state functionality
     public override void OnEnter()
     {
+        fsm.preventAnyStateFlag = true;
         Debug.Log("COLLECT_WATER: Get more water from a well");
         fsm.addToStress(0.5f);
         waterRefilled = false;
@@ -29,7 +30,9 @@ public class ChefCollectWaterState : ChefBaseState
     }
 
     public override void OnExit()
-    { }
+    {
+        fsm.preventAnyStateFlag = false;
+    }
 
     public IEnumerator refillingWater()
     {

@@ -13,6 +13,7 @@ public class ChefFatigueState : ChefBaseState
     //methods inherited from the abstract class are overridden to give the state functionality
     public override void OnEnter()
     {
+        fsm.preventAnyStateFlag = true;
         Debug.Log("FATIGUE: Fainted. Resting for 10 seconds");
         fsm.faintedCoroutine();
     }
@@ -25,6 +26,7 @@ public class ChefFatigueState : ChefBaseState
     public override void OnExit()
     {
         fsm.fatigueFlag = false; //fatigue flag boolean becomes false so it can be entered again
+        fsm.preventAnyStateFlag = false;
     }
 
     public IEnumerator fainted()

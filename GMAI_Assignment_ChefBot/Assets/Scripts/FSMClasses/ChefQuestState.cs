@@ -13,6 +13,7 @@ public class ChefQuestState : ChefBaseState
     //methods inherited from the abstract class are overridden to give the state functionality
     public override void OnEnter()
     {
+        fsm.preventAnyStateFlag = true;
         Debug.Log("QUEST: Follow Player until quest is done");
     }
 
@@ -27,11 +28,13 @@ public class ChefQuestState : ChefBaseState
     }
 
     public override void OnExit()
-    { }
+    {
+        fsm.preventAnyStateFlag = false;
+    }
 
     private bool finishQuest()
     {
-        if (Random.Range(0, 10) >= 5f) //random no. is picked from 0-10, if its 2 or more, returns true
+        if (Random.Range(0, 10) >= 5f) //random no. is picked from 0-10, if its 5 or more, returns true
         {
             return true;
         }

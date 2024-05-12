@@ -67,13 +67,13 @@ public class ChefBotFSM : MonoBehaviour
             SwitchState(fatigueState);
         }
 
+        currentState.OnUpdate();
+
         if (!refuelFlag && refuelNeeded() && !preventAnyStateFlag) //transition condition (any state) - if its not already in refuel state, refuel is needed and not in inquire state go to refuel state
         {
             refuelFlag = true;
             SwitchState(refuelState);
         }
-
-        currentState.OnUpdate();
     }
 
     //transitioning to another state - function is used in the subclasses with a parameter (new state) passed in
@@ -125,7 +125,7 @@ public class ChefBotFSM : MonoBehaviour
 
     private bool refuelNeeded()
     {
-        if (Random.Range(0, 10) >= 8f) //random no. is picked from 0-10, if its 5 or more, returns true
+        if (Random.Range(0, 10) >= 8f) //random no. is picked from 0-10, if its 8 or more, returns true
         {
             return true;
         }

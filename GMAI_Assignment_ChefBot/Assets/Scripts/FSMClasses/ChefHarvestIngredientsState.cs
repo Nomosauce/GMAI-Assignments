@@ -15,6 +15,7 @@ public class ChefHarvestIngredientsState : ChefBaseState
     //methods inherited from the abstract class are overridden to give the state functionality
     public override void OnEnter()
     {
+        fsm.preventAnyStateFlag = true;
         Debug.Log("HARVEST_INGREDIENTS: Harvest crops and animals");
         fsm.addToStress(0.5f);
         ingredientsRefilled = false;
@@ -29,7 +30,9 @@ public class ChefHarvestIngredientsState : ChefBaseState
     }
 
     public override void OnExit()
-    { }
+    {
+        fsm.preventAnyStateFlag = false;
+    }
 
     public IEnumerator refillingIngredients()
     {
