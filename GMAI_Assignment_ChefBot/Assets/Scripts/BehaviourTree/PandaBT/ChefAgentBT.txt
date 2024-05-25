@@ -1,0 +1,12 @@
+tree("Root")
+	fallback
+		tree("Approach")
+		tree("Idle")
+
+tree("Approach")
+	sequence
+		isNear("Player", "Counter")
+		goTo("Counter")
+
+tree("Idle")
+	idle
