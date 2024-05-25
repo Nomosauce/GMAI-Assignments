@@ -12,7 +12,7 @@ public class ChefAgentTasks : MonoBehaviour
     {
         Transform obj1 = GameObject.FindGameObjectWithTag(tag1).transform;
         Transform obj2 = GameObject.FindGameObjectWithTag(tag2).transform;
-        float distance = 5f;
+        float distance = 2.5f;
 
         return Vector3.Distance(obj1.position, obj2.position) <= distance;
     }
@@ -22,7 +22,7 @@ public class ChefAgentTasks : MonoBehaviour
     {
         Transform target = GameObject.FindGameObjectWithTag(tag).transform;
         agent.SetDestination(target.position);
-        agent.stoppingDistance = 1f;
+        agent.stoppingDistance = 2f;
 
         ThisTask.Succeed();
     }

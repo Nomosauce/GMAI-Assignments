@@ -4,9 +4,10 @@ tree("Root")
 		tree("Idle")
 
 tree("Approach")
-	sequence
-		isNear("Player", "Counter")
-		goTo("Counter")
+	fallback
+		sequence
+			isNear("Player", "Counter")
+			goTo("Counter")
 
 tree("Idle")
-	idle
+		goTo("StartPos")
