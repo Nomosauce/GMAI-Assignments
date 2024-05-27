@@ -7,10 +7,15 @@ public class PlayerMovement : MonoBehaviour
     //3d movement code by brackeys: https://www.youtube.com/watch?v=4HpC--2iowE&t=675s
     private CharacterController controller;
     private float playerSpeed = 6f;
+    public bool stopPlayer;
+
+    public GameObject monster;
+    public ChefController chef;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        stopPlayer = false;
     }
 
     void Update()
@@ -22,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized; //since we just need the direction and prevent the magnitude from messing with the calculation, it is normalised into a unit
                                                                               //(avoids player from speeding up when moving diagonally)
 
-        if (direction.magnitude >= 0.1f) //checks if the player inputs is moving to any direction by checking the length of the direction vector
+        if (!stopPlayer && direction.magnitude >= 0.1f) //checks if the player inputs is moving to any direction by checking the length of the direction vector
         {
             if (Input.GetKey(KeyCode.LeftShift))
             {
@@ -32,6 +37,15 @@ public class PlayerMovement : MonoBehaviour
             {
                 controller.Move(direction * playerSpeed * Time.deltaTime);
             }
+        }
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.gameObject.CompareTag("Monster"))
+        {
+            chef.monsterDefeat = true;
+            monster.SetActive(false);
         }
     }
 }

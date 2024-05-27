@@ -6,6 +6,12 @@ TagManager:
   tags:
   - Counter
   - StartPos
+  - Chef
+  - TreePos
+  - Monster
+  - Stove
+  - Crop
+  - CropHarvest
   layers:
   - Default
   - TransparentFX
