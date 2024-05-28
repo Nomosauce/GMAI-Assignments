@@ -44,7 +44,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (hit.gameObject.CompareTag("Monster"))
         {
-            chef.monsterDefeat = true;
+            chef.questIsDone = true;
             monster.SetActive(false);
         }
     }

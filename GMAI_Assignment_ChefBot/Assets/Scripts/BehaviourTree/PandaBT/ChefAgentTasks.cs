@@ -13,6 +13,7 @@ public class ChefAgentTasks : MonoBehaviour
     public ChefController chef;
     public PlayerMovement player;
 
+    //general
     [Task]
     bool IsNear(string tag1, string tag2) //task that checks if two objects are close to each other by getting the Transform (since only position is needed) component of the tagged objects
     {
@@ -30,7 +31,13 @@ public class ChefAgentTasks : MonoBehaviour
         agent.SetDestination(target.position);
         agent.stoppingDistance = 2f;
 
-        ThisTask.Succeed();
+        //was having trouble with the BT continuing before the navmeshagent reaches its destination, i referred to these forum: https://discussions.unity.com/t/how-can-i-tell-when-a-navmeshagent-has-reached-its-destination/52403/5,
+        //https://forum.unity.com/threads/navmeshpathstatus-is-always-pathcomplete.396390/ to check if the agent reached its destination
+
+        if (!agent.hasPath && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            ThisTask.Succeed();
+        }
     }
 
     [Task]
@@ -41,9 +48,17 @@ public class ChefAgentTasks : MonoBehaviour
     }
 
     [Task]
+    void Idle()
+    {
+        interactTxt.text = "E to interact";
+        ThisTask.Succeed();
+    }
+
+    //interaction at counter
+    [Task]
     void GiveChoices()
     {
-        interactTxt.text = "1 - Food/2 - Drink/3 - Quest/SPACE - Bye";
+        interactTxt.text = "1 - Order/2 - Quest/SPACE - Bye";
         if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Space))
         {
             ThisTask.Succeed();
@@ -64,13 +79,7 @@ public class ChefAgentTasks : MonoBehaviour
         ThisTask.Succeed();
     }
 
-    [Task]
-    void Idle()
-    {
-        interactTxt.text = "E to interact";
-        ThisTask.Succeed();
-    }
-
+    //quest
     [Task]
     bool InQuest()
     {
@@ -85,12 +94,6 @@ public class ChefAgentTasks : MonoBehaviour
     }
 
     [Task]
-    bool MonsterDefeated()
-    {
-        return chef.monsterDefeat;
-    }
-
-    [Task]
     void EndQuest()
     {
         chef.isInQuest = false;
@@ -98,9 +101,23 @@ public class ChefAgentTasks : MonoBehaviour
     }
 
     [Task]
-    void SetOrder(bool status)
+    bool QuestIsDone()
     {
-        chef.isPreparingOrder = status;
+        return chef.questIsDone;
+    }
+
+    //preparing order
+    [Task]
+    void StartOrder()
+    {
+        chef.isPreparingOrder = true;
+        ThisTask.Succeed();
+    }
+
+    [Task]
+    void EndOrder()
+    {
+        chef.isPreparingOrder = false;
         ThisTask.Succeed();
     }
 
@@ -110,6 +127,19 @@ public class ChefAgentTasks : MonoBehaviour
         return chef.isPreparingOrder;
     }
 
+    [Task]
+    void Cook()
+    {
+        chef.isCooking = true;
+        if (chef.cookingTime >= 100f)
+        {
+            chef.cookingTime = 0f;
+            chef.isCooking = false;
+            ThisTask.Succeed();
+        }
+    }
+
+    //preparing order - stock & refilling
     [Task]
     bool HasCrops()
     {
@@ -128,21 +158,33 @@ public class ChefAgentTasks : MonoBehaviour
     }
 
     [Task]
-    void Cook()
-    {
-        chef.isCooking = true;
-        if (chef.cookingTime >= 100f)
-        {
-            chef.cookingTime = 0f;
-            chef.isCooking = false;
-            ThisTask.Succeed();
-        }
-    }
-
-    [Task]
     void HarvestCrops()
     {
         chef.fillCropStock();
+        ThisTask.Succeed();
+    }
+
+    [Task]
+    bool HasMeat()
+    {
+        if (chef.meatLeft > 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    [Task]
+    bool TakeMeat()
+    {
+        chef.TakeMeat();
+        return true;
+    }
+
+    [Task]
+    void HarvestMeat()
+    {
+        chef.fillMeatStock();
         ThisTask.Succeed();
     }
 }

@@ -11,31 +11,26 @@ tree("Quest")
 		GoTo("TreePos")
 		fallback
 			sequence
-				MonsterDefeated
+				QuestIsDone
 				EndQuest
 			Succeed
 
 tree("PrepareOrder")
 	sequence
 		IsPreparingOrder
-		fallback
-			sequence
-				HasCrops
-				GoTo("Crop")
-				fallback
-					sequence
-						IsNear("Chef", "Crop")
-						TakeCrop
-						GoTo("Stove")
-						Cook
-						GoTo("Counter")
-						Wait 3.0
-						SetOrder(false)
-					Succeed
-			sequence
-				GoTo("CropHarvest")
-				Wait 8.0
-				HarvestCrops
+		sequence
+			fallback
+				sequence
+					not HasCrops
+					GoTo("CropHarvest")
+					HarvestCrops
+				Succeed
+			GoTo("Crop")
+			TakeCrop
+			GoTo("Stove")
+			Cook
+		GoTo("Counter")
+		EndOrder
 
 tree("Approach")
 	sequence
@@ -57,15 +52,13 @@ tree("Interaction")
 		StopPlayer(false)
 		fallback
 			sequence
-				fallback
-					IsKeyDown("Alpha1")
-					IsKeyDown("Alpha2")
-				SetOrder(true)
+				IsKeyDown("Alpha1")
+				StartOrder
 				TextSetActive(false)
 			sequence
-				IsKeyDown("Alpha3")
+				IsKeyDown("Alpha2")
 				fallback
-					MonsterDefeated
+					QuestIsDone
 					sequence
 						StartQuest
 						TextSetActive(false)

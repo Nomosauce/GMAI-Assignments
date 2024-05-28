@@ -6,17 +6,20 @@ using UnityEngine;
 public class ChefController : MonoBehaviour
 {
     public bool isInQuest = false;
-    public bool monsterDefeat = false;
+    public bool questIsDone = false;
     public bool isPreparingOrder = false;
     public bool isCooking = false;
 
     public GameObject monster;
     public GameObject[] cropStock;
+    public GameObject[] meatStock;
 
     public int cropsLeft = 0;
     public int cropStockIndex = 0;
+    public int meatLeft = 0;
+    public int meatStockIndex = 0;
 
-    public  float cookingTime = 0;
+    public  float cookingTime = 0f;
 
     // Start is called before the first frame update
     void Start()
@@ -28,11 +31,16 @@ public class ChefController : MonoBehaviour
         {
             cropsLeft++;
         }
+        meatStock = GameObject.FindGameObjectsWithTag("Meat");
+        foreach (var item in meatStock)
+        {
+            meatLeft++;
+        }
     }
 
     void Update()
     {
-        if (!monsterDefeat && isInQuest)
+        if (!questIsDone && isInQuest)
         {
             monster.SetActive(true);
         }
@@ -66,5 +74,30 @@ public class ChefController : MonoBehaviour
         {
             cropStock[i].SetActive(true);
         }
+    }
+
+    public void TakeMeat()
+    {
+        if (meatLeft > 0)
+        {
+            meatLeft -= 1;
+            meatStock[meatStockIndex].SetActive(false);
+            meatStockIndex++;
+        }
+    }
+
+    public void fillMeatStock()
+    {
+        meatStockIndex = 0;
+        meatLeft = meatStock.Length;
+        for (int i = 0; i < meatStock.Length; i++)
+        {
+            meatStock[i].SetActive(true);
+        }
+    }
+
+    public void takeIngredient(string ingredient)
+    {
+
     }
 }
