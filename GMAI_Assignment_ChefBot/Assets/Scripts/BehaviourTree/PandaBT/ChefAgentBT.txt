@@ -1,9 +1,15 @@
 tree("Root")
 	fallback
+		tree("Angry")
 		tree("Quest")
 		tree("PrepareOrder")
 		tree("Approach")
 		tree("Idle")
+
+tree("Angry")
+	sequence
+		IsAngry
+		GoTo("Player")
 
 tree("Quest")
 	sequence
@@ -28,7 +34,18 @@ tree("PrepareOrder")
 			GoTo("Crop")
 			TakeCrop
 			GoTo("Stove")
-			Cook
+		sequence
+			fallback
+				sequence
+					not HasMeat
+					GoTo("Animals")
+					HarvestMeat
+				Succeed
+			GoTo("Meat")
+			TakeMeat
+			GoTo("Stove")
+		Cook
+		GoTo("Table")
 		GoTo("Counter")
 		EndOrder
 

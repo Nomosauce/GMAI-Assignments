@@ -12,8 +12,9 @@ TagManager:
   - Stove
   - Crop
   - CropHarvest
-  - Animal
   - Meat
+  - Animals
+  - Table
   layers:
   - Default
   - TransparentFX

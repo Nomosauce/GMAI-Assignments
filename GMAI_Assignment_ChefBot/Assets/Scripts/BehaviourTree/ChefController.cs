@@ -9,10 +9,12 @@ public class ChefController : MonoBehaviour
     public bool questIsDone = false;
     public bool isPreparingOrder = false;
     public bool isCooking = false;
+    public bool isAngry = false;
 
     public GameObject monster;
     public GameObject[] cropStock;
     public GameObject[] meatStock;
+    public GameObject chefsGold;
 
     public int cropsLeft = 0;
     public int cropStockIndex = 0;
@@ -54,6 +56,12 @@ public class ChefController : MonoBehaviour
                 return;
             }
         }
+
+        if (isAngry)
+        {
+            isInQuest = false;
+            isPreparingOrder = false;
+        }
     }
 
     public void TakeCrops()
@@ -94,10 +102,5 @@ public class ChefController : MonoBehaviour
         {
             meatStock[i].SetActive(true);
         }
-    }
-
-    public void takeIngredient(string ingredient)
-    {
-
     }
 }

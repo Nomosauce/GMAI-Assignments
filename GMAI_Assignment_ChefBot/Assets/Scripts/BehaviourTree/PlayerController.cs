@@ -1,21 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     //3d movement code by brackeys: https://www.youtube.com/watch?v=4HpC--2iowE&t=675s
     private CharacterController controller;
     private float playerSpeed = 6f;
     public bool stopPlayer;
 
+    public GameObject stealText;
     public GameObject monster;
+
     public ChefController chef;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
         stopPlayer = false;
+        stealText.SetActive(false);
     }
 
     void Update()
@@ -38,6 +42,19 @@ public class PlayerMovement : MonoBehaviour
                 controller.Move(direction * playerSpeed * Time.deltaTime);
             }
         }
+
+        if (!chef.isAngry && withinStealingRange())
+        {
+            stealText.SetActive(true);
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                stealGold();
+            }
+        }
+        else
+        {
+            stealText.SetActive(false);
+        }
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
@@ -47,5 +64,31 @@ public class PlayerMovement : MonoBehaviour
             chef.questIsDone = true;
             monster.SetActive(false);
         }
+
+        if (hit.gameObject.CompareTag("Chef"))
+        {
+            chef.isAngry = false;
+            chef.chefsGold.SetActive(true);
+        }
+    }
+
+    bool withinStealingRange()
+    {
+        Transform table = GameObject.FindGameObjectWithTag("Table").transform;
+
+        if (Vector3.Distance(gameObject.transform.position, table.position) <= 5f)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    void stealGold()
+    {
+        chef.chefsGold.SetActive(false);
+        stealText.SetActive(false);
+        chef.isAngry = true;
+
+        monster.SetActive(false);
     }
 }

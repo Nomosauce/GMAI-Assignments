@@ -11,7 +11,7 @@ public class ChefAgentTasks : MonoBehaviour
     public TMP_Text interactTxt;
 
     public ChefController chef;
-    public PlayerMovement player;
+    public PlayerController player;
 
     //general
     [Task]
@@ -19,7 +19,7 @@ public class ChefAgentTasks : MonoBehaviour
     {
         Transform obj1 = GameObject.FindGameObjectWithTag(tag1).transform;
         Transform obj2 = GameObject.FindGameObjectWithTag(tag2).transform;
-        float distance = 2.5f;
+        float distance = 2f;
 
         return Vector3.Distance(obj1.position, obj2.position) <= distance; //vectorn.Distance method return the difference between the positions of the gameobjects and compares them to the set distance 
     }
@@ -29,14 +29,26 @@ public class ChefAgentTasks : MonoBehaviour
     {
         Transform target = GameObject.FindGameObjectWithTag(tag).transform;
         agent.SetDestination(target.position);
-        agent.stoppingDistance = 2f;
+        agent.stoppingDistance = 1f;
+        if (chef.isAngry)
+        {
+            agent.speed = 12f;
+        }
+        else
+        {
+            agent.speed = 6f;
+        }
 
         //was having trouble with the BT continuing before the navmeshagent reaches its destination, i referred to these forum: https://discussions.unity.com/t/how-can-i-tell-when-a-navmeshagent-has-reached-its-destination/52403/5,
         //https://forum.unity.com/threads/navmeshpathstatus-is-always-pathcomplete.396390/ to check if the agent reached its destination
 
-        if (!agent.hasPath && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             ThisTask.Succeed();
+        }
+        else if (chef.isAngry)
+        {
+            ThisTask.Fail();
         }
     }
 
@@ -59,7 +71,7 @@ public class ChefAgentTasks : MonoBehaviour
     void GiveChoices()
     {
         interactTxt.text = "1 - Order/2 - Quest/SPACE - Bye";
-        if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Space))
         {
             ThisTask.Succeed();
         }
@@ -137,6 +149,11 @@ public class ChefAgentTasks : MonoBehaviour
             chef.isCooking = false;
             ThisTask.Succeed();
         }
+        else if (chef.isAngry)
+        {
+            chef.isCooking = false;
+            ThisTask.Fail();
+        }
     }
 
     //preparing order - stock & refilling
@@ -186,5 +203,12 @@ public class ChefAgentTasks : MonoBehaviour
     {
         chef.fillMeatStock();
         ThisTask.Succeed();
+    }
+
+    //angry chef
+    [Task]
+    bool IsAngry()
+    {
+        return chef.isAngry;
     }
 }
