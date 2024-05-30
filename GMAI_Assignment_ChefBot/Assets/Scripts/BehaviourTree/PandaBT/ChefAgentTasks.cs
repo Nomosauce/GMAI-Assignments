@@ -3,13 +3,15 @@ using Panda;
 using System.Runtime.CompilerServices;
 using UnityEngine.AI;
 using TMPro;
+using System.Drawing;
+using System.Linq;
 
 public class ChefAgentTasks : MonoBehaviour
 {
     public NavMeshAgent agent;
     public GameObject interactTxtGO;
     public TMP_Text interactTxt;
-
+    public GameObject chefsGold;
     public ChefController chef;
     public PlayerController player;
 
@@ -17,6 +19,7 @@ public class ChefAgentTasks : MonoBehaviour
     [Task]
     bool IsNear(string tag1, string tag2) //task that checks if two objects are close to each other by getting the Transform (since only position is needed) component of the tagged objects
     {
+        //-side note, admittedly i looked into the example A2 sample for this and changed it slightly to fit this context
         Transform obj1 = GameObject.FindGameObjectWithTag(tag1).transform;
         Transform obj2 = GameObject.FindGameObjectWithTag(tag2).transform;
         float distance = 2f;
@@ -27,28 +30,23 @@ public class ChefAgentTasks : MonoBehaviour
     [Task]
     void GoTo(string tag)
     {
+        //abort going if its angry after chasing the player or going baco to table
+        if (chef.isAngry && !(tag.Equals("Player") || tag.Equals("Table"))) 
+        {
+            ThisTask.Succeed();
+            return;
+        }
+
         Transform target = GameObject.FindGameObjectWithTag(tag).transform;
         agent.SetDestination(target.position);
         agent.stoppingDistance = 1f;
-        if (chef.isAngry)
-        {
-            agent.speed = 12f;
-        }
-        else
-        {
-            agent.speed = 6f;
-        }
-
+        
         //was having trouble with the BT continuing before the navmeshagent reaches its destination, i referred to these forum: https://discussions.unity.com/t/how-can-i-tell-when-a-navmeshagent-has-reached-its-destination/52403/5,
         //https://forum.unity.com/threads/navmeshpathstatus-is-always-pathcomplete.396390/ to check if the agent reached its destination
 
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             ThisTask.Succeed();
-        }
-        else if (chef.isAngry)
-        {
-            ThisTask.Fail();
         }
     }
 
@@ -95,6 +93,8 @@ public class ChefAgentTasks : MonoBehaviour
     [Task]
     bool InQuest()
     {
+        //abort quest if its angry
+        if (chef.isAngry) return false;
         return chef.isInQuest;
     }
 
@@ -136,6 +136,9 @@ public class ChefAgentTasks : MonoBehaviour
     [Task]
     bool IsPreparingOrder()
     {
+        //do not prepare order of its angry
+        if (chef.isAngry) return false;
+
         return chef.isPreparingOrder;
     }
 
@@ -143,16 +146,11 @@ public class ChefAgentTasks : MonoBehaviour
     void Cook()
     {
         chef.isCooking = true;
-        if (chef.cookingTime >= 100f)
+        if (chef.cookingTime >= 100f || chef.isAngry)
         {
             chef.cookingTime = 0f;
             chef.isCooking = false;
             ThisTask.Succeed();
-        }
-        else if (chef.isAngry)
-        {
-            chef.isCooking = false;
-            ThisTask.Fail();
         }
     }
 
@@ -184,10 +182,7 @@ public class ChefAgentTasks : MonoBehaviour
     [Task]
     bool HasMeat()
     {
-        if (chef.meatLeft > 0)
-        {
-            return true;
-        }
+        if (chef.meatLeft > 0) return true;
         return false;
     }
 
@@ -209,6 +204,15 @@ public class ChefAgentTasks : MonoBehaviour
     [Task]
     bool IsAngry()
     {
+        agent.speed = chef.isAngry ? 12f : 6f;
         return chef.isAngry;
+    }
+
+    [Task]
+    void ExitAngry()
+    {
+        chefsGold.SetActive(true);
+        chef.isAngry = false;
+        ThisTask.Succeed();
     }
 }

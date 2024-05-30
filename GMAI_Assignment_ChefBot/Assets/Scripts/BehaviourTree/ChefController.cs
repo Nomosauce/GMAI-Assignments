@@ -26,10 +26,10 @@ public class ChefController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        monster.SetActive(false);
+        monster.SetActive(false); //as i rather have the monster exist only within the quest, he is first set to false
 
-        cropStock = GameObject.FindGameObjectsWithTag("Crop");
-        foreach (var item in cropStock)
+        cropStock = GameObject.FindGameObjectsWithTag("Crop"); //fill the crop and meat arrays with all game objects that have that tag
+        foreach (var item in cropStock) //run through each element in these arrays to increade the count of the tagged gameobjects that are in the scene, to prevent mistakes from hardcoding
         {
             cropsLeft++;
         }
@@ -42,12 +42,12 @@ public class ChefController : MonoBehaviour
 
     void Update()
     {
-        if (!questIsDone && isInQuest)
+        if (!questIsDone && isInQuest) //enables the monster gameobject if the quest has not been done before and if the player is currently in a quest
         {
             monster.SetActive(true);
         }
 
-        if (isCooking)
+        if (isCooking) //as long as it is cooking, it will continuely increment by 15 until it first reaches 100, where the cookingtime will remain 100 and is returned to be used in the BT
         {
             cookingTime += 15f * Time.deltaTime;
             if (cookingTime >= 100f)
@@ -64,9 +64,9 @@ public class ChefController : MonoBehaviour
         }
     }
 
-    public void TakeCrops()
+    public void TakeCrops() //for disabling the crop ingredient gameobjects on the scene one by one in the array, by increasing the index everytime the bot uses the crops to show that it is visibly running out
     {
-        if (cropsLeft > 0)
+        if (cropsLeft > 0) //only reduce when there are still crops left
         {
             cropsLeft -= 1;
             cropStock[cropStockIndex].SetActive(false);
@@ -74,7 +74,17 @@ public class ChefController : MonoBehaviour
         }
     }
 
-    public void fillCropStock()
+    public void TakeMeat() //for disabling the meat ingredient gameobjects on the scene one by one in the array, by increasing the index everytime the bot uses the meat to show that it is visibly running out
+    {
+        if (meatLeft > 0) //only reduce when there are still meat left
+        {
+            meatLeft -= 1;
+            meatStock[meatStockIndex].SetActive(false);
+            meatStockIndex++;
+        }
+    }
+
+    public void fillCropStock() //for resetting the index back to 0, the crops left back to the maximum number of crop in the scene, and to enable all the crop ingredients in the scene
     {
         cropStockIndex = 0;
         cropsLeft = cropStock.Length;
@@ -84,17 +94,7 @@ public class ChefController : MonoBehaviour
         }
     }
 
-    public void TakeMeat()
-    {
-        if (meatLeft > 0)
-        {
-            meatLeft -= 1;
-            meatStock[meatStockIndex].SetActive(false);
-            meatStockIndex++;
-        }
-    }
-
-    public void fillMeatStock()
+    public void fillMeatStock() //for resetting the index back to 0, the meat left back to the maximum number of meat in the scene, and to enable all the meat ingredients in the scene
     {
         meatStockIndex = 0;
         meatLeft = meatStock.Length;
