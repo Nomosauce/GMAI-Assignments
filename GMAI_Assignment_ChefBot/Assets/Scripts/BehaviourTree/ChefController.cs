@@ -46,6 +46,10 @@ public class ChefController : MonoBehaviour
         {
             monster.SetActive(true);
         }
+        else //makes the monster only visible in a quest
+        {
+            monster.SetActive(false);
+        }
 
         if (isCooking) //as long as it is cooking, it will continuely increment by 15 until it first reaches 100, where the cookingtime will remain 100 and is returned to be used in the BT
         {

@@ -84,6 +84,6 @@ public class PlayerController : MonoBehaviour
         stealText.SetActive(false); //disable text UI here because i did not want to use pandaBT task function for the player
         chef.isAngry = true;
 
-        monster.SetActive(false); //personally wouldnt want the monster from the quest to stay put since its meant to only exist within the quest
+        //monster.SetActive(false); //personally wouldnt want the monster from the quest to stay put since its meant to only exist within the quest
     }
 }
