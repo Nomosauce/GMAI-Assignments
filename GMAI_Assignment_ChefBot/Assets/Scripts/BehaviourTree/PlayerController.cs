@@ -6,10 +6,13 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     //3d movement code by brackeys: https://www.youtube.com/watch?v=4HpC--2iowE&t=675s
+    [Header("Player Configuration")]
     private CharacterController controller;
-    private float playerSpeed = 6f;
+    public float walkSpeed = 6f;
+    public float runSpeed = 12f;
     public bool stopPlayer;
 
+    [Header("Others")]
     public GameObject stealText;
     public GameObject monster;
 
@@ -33,14 +36,8 @@ public class PlayerController : MonoBehaviour
 
         if (!stopPlayer && direction.magnitude >= 0.1f) //checks if the player inputs is moving to any direction by checking the length of the direction vector
         {
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                controller.Move(direction * (playerSpeed * 2) * Time.deltaTime); //doubles the speed whenever left shift is held down
-            }
-            else
-            {
-                controller.Move(direction * playerSpeed * Time.deltaTime);
-            }
+            float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;  //shortened if-statement which decides which speed var the player uses, when holding shift key it uses the run speed, and walk speed when not
+            controller.Move(direction * currentSpeed * Time.deltaTime);
         }
 
         if (!chef.isAngry && withinStealingRange()) //to give the player the option to steal the chefs gold, which will trigger its angry mode

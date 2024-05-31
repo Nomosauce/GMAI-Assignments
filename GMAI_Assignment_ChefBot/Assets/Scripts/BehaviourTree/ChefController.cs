@@ -6,22 +6,27 @@ using UnityEngine.Rendering;
 
 public class ChefController : MonoBehaviour
 {
+    [Header("Quest")]
+    public GameObject monster;
+    
     public bool isInQuest = false;
     public bool questIsDone = false;
-    
+
+    [Header("Angry")]
+    public GameObject chefsGold;
+
     public bool isAngry = false;
 
-    public GameObject monster;
+    [Header("Ingredients")]
     public GameObject[] cropStock;
     public GameObject[] meatStock;
-    public GameObject chefsGold;
 
     public int cropsLeft = 0;
     public int cropStockIndex = 0;
     public int meatLeft = 0;
     public int meatStockIndex = 0;
 
-    [Header("Making Food")]
+    [Header("Cooking")]
     public bool isPreparingOrder = false;
     public bool isCooking = false;
     public bool isFoodBurnt = false;
@@ -36,14 +41,10 @@ public class ChefController : MonoBehaviour
     {
         monster.SetActive(false); //as i rather have the monster exist only within the quest, he is first set to false
 
-        cropStock = GameObject.FindGameObjectsWithTag("Crop");
+        cropStock = GameObject.FindGameObjectsWithTag("Crop"); //fill arrays with the crop/meat gameobjects tagged in scene
         meatStock = GameObject.FindGameObjectsWithTag("Meat"); 
-        //fill the crop and meat arrays with all game objects that have that tag
-        foreach (var item in cropStock) //run through each element in these arrays to increade the count of the tagged gameobjects that are in the scene, to prevent mistakes from hardcoding
-        {
-            cropsLeft++;
-        }
-
+        
+        cropsLeft = cropStock.Length; //represents the initial number of crop/meat tagged gameobjects in scene by setting it to the size of the array
         meatLeft = meatStock.Length;
     }
 
@@ -58,19 +59,19 @@ public class ChefController : MonoBehaviour
             monster.SetActive(false);
         }
 
-        if (isCooking) //as long as it is cooking, it will continuely increment by 15 until it first reaches 100, where the cookingtime will remain 100 and is returned to be used in the BT
+        if (isCooking) //as long as it is cooking, it will continuely increment by 15 until it first reaches 100, where the cookingtime will be set to 100 before being returned to the BT
         {
             cookingTime += cookingSpeed * Time.deltaTime;
 
-            if (cookingTime >= 100f || isAngry)
+            if (cookingTime >= 100f || isAngry) //if the chef is angry the cooking skips to being done as chasing the player interrupts its cooking action 
             {
                 cookingTime = 100f;
-                if (!isAngry) return;
+                if (!isAngry) return; //to simulate how the food burns after being left on the stove unattended (like its still cooking) from chasing the player, only when its angry, it will randomise if the chef has returned to burnt food or not
                 isFoodBurnt = Random.Range(0, 10) <= burntChance ? true : false;
             }
         }
 
-        if (isAngry)
+        if (isAngry) //turn off the quest and order booleans
         {
             isInQuest = false;
             isPreparingOrder = false;

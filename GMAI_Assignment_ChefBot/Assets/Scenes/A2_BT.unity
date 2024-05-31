@@ -1829,13 +1829,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be7adca4ad1d7c44aad2ffae8d06e35d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  monster: {fileID: 1658611909}
   isInQuest: 0
   questIsDone: 0
+  chefsGold: {fileID: 1288388367}
   isAngry: 0
-  monster: {fileID: 1658611909}
   cropStock: []
   meatStock: []
-  chefsGold: {fileID: 1288388367}
   cropsLeft: 0
   cropStockIndex: 0
   meatLeft: 0
@@ -2219,6 +2219,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b710069f74a6dd4588130be3abf501d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  walkSpeed: 6
+  runSpeed: 12
   stopPlayer: 0
   stealText: {fileID: 1720509737}
   monster: {fileID: 1658611909}

@@ -6,8 +6,13 @@ using TMPro;
 using System.Drawing;
 using System.Linq;
 
-public class ChefAgentTasks : MonoBehaviour
+public class AgentTasks : MonoBehaviour
 {
+    [Header("Speed")]
+    public float agentWalkSpeed = 6f;
+    public float agentRunSpeed = 13f;
+
+    [Header("References")]
     public NavMeshAgent agent;
     public GameObject interactTxtGO;
     public TMP_Text interactTxt;
@@ -30,11 +35,10 @@ public class ChefAgentTasks : MonoBehaviour
     [Task]
     void GoTo(string tag)
     {
-        //abort going if its angry after chasing the player or going back to table
-        if (chef.isAngry && !(tag.Equals("Player") || tag.Equals("Table") || tag.Equals("Trash") || tag.Equals("Stove"))) 
-        {
-            ThisTask.Succeed();
-        }
+        //array of tags that are meant to be unaffected by the go to interrupt due to them being used for the angry tree. i referred to: https://www.tutorialspoint.com/how-to-check-in-chash-whether-the-string-array-contains-a-particular-work-in-a-string-array
+        //this is to simplify the if statement to avoid excessive/inefficient use of || || ||
+        string[] unaffectedTags = {"Player", "Table", "Trash", "Stove"};
+        if (chef.isAngry && !(unaffectedTags.Contains(tag))) ThisTask.Succeed();//abort going to a destination if its angry (interruption to go to)
 
         Transform target = GameObject.FindGameObjectWithTag(tag).transform;
         agent.SetDestination(target.position);
@@ -50,16 +54,16 @@ public class ChefAgentTasks : MonoBehaviour
     }
 
     [Task]
-    void TextSetActive(bool status)
+    void TextSetActive(bool status) //pass in from AgentBT
     {
-        interactTxtGO.SetActive(status);
+        interactTxtGO.SetActive(status); //set true or false depending on parameter
         ThisTask.Succeed();
     }
 
     [Task]
     void Idle()
     {
-        interactTxt.text = "E to interact";
+        interactTxt.text = "E to interact"; //reset text back to default when going back to idle
         ThisTask.Succeed();
     }
 
@@ -67,8 +71,8 @@ public class ChefAgentTasks : MonoBehaviour
     [Task]
     void GiveChoices()
     {
-        interactTxt.text = "1 - Order/2 - Quest/SPACE - Bye";
-        if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Space))
+        interactTxt.text = chef.questIsDone ? "1 - Order/SPACE - Bye" : "1 - Order/2 - Quest/SPACE - Bye"; //since quest cannot be done again, the option is removed
+        if (Input.GetKeyDown(KeyCode.Alpha1) || (Input.GetKeyDown(KeyCode.Alpha2) && !chef.questIsDone) || Input.GetKeyDown(KeyCode.Space))
         {
             ThisTask.Succeed();
         }
@@ -77,12 +81,12 @@ public class ChefAgentTasks : MonoBehaviour
     [Task]
     void StopPlayer(bool status)
     {
-        player.stopPlayer = status;
+        player.stopPlayer = status; 
         ThisTask.Succeed();
     }
 
     [Task]
-    void ChangeText(string text)
+    void ChangeText(string text) 
     {
         interactTxt.text = text;
         ThisTask.Succeed();
@@ -94,7 +98,7 @@ public class ChefAgentTasks : MonoBehaviour
     {
         //abort quest if its angry
         if (chef.isAngry) return false;
-        return chef.isInQuest;
+        return chef.isInQuest; //pass through the quest tree when this is returned true
     }
 
     [Task]
@@ -114,14 +118,14 @@ public class ChefAgentTasks : MonoBehaviour
     [Task]
     bool QuestIsDone()
     {
-        return chef.questIsDone;
+        return chef.questIsDone; //to stop the quest from starting again
     }
 
     //preparing order
     [Task]
     void StartOrder()
     {
-        chef.isPreparingOrder = true;
+        chef.isPreparingOrder = true; 
         ThisTask.Succeed();
     }
 
@@ -135,21 +139,21 @@ public class ChefAgentTasks : MonoBehaviour
     [Task]
     bool IsPreparingOrder()
     {
-        //do not prepare order of its angry
+        //do not prepare order if its angry
         if (chef.isAngry) return false;
-
-        return chef.isPreparingOrder;
+        return chef.isPreparingOrder; //pass through the prepare order tree when this is returned true
     }
 
     [Task]
     void Cook()
     {
-        chef.isCooking = true;
+        chef.isCooking = true; //starts the cooking in chef controller update
         if (chef.cookingTime >= 100f)
         {
-            chef.cookingTime = 0f;
-            chef.isCooking = false;
-            if (chef.isAngry)
+            chef.cookingTime = 0f; //to reset the cookingtime once cooking is completed
+            chef.isCooking = false; 
+
+            if (chef.isAngry) //so that if chef is angry. it will immediately chase the player even if its cooking (as without it, it will go to counter before chasing the player)
             {
                 ThisTask.Fail();
                 return;
@@ -163,45 +167,40 @@ public class ChefAgentTasks : MonoBehaviour
     [Task]
     bool HasCrops()
     {
-        if (chef.cropsLeft > 0)
-        {
-            return true;
-        }
-        return false;
+        return chef.cropsLeft > 0;
     }
 
     [Task]
     bool TakeCrop()
     {
-        chef.TakeCrops();
+        chef.TakeCrops(); //call take crops function in chef controller
         return true;
     }
 
     [Task]
     void HarvestCrops()
     {
-        chef.fillCropStock();
+        chef.fillCropStock(); //call refill crop function in chef controller
         ThisTask.Succeed();
     }
 
     [Task]
     bool HasMeat()
     {
-        if (chef.meatLeft > 0) return true;
-        return false;
+        return chef.meatLeft > 0;
     }
 
     [Task]
     bool TakeMeat()
     {
-        chef.TakeMeat();
+        chef.TakeMeat(); //call take meat function in chef controller
         return true;
     }
 
     [Task]
     void HarvestMeat()
     {
-        chef.fillMeatStock();
+        chef.fillMeatStock(); //call refill meat function in chef controller
         ThisTask.Succeed();
     }
 
@@ -209,14 +208,14 @@ public class ChefAgentTasks : MonoBehaviour
     [Task]
     bool IsAngry()
     {
-        agent.speed = chef.isAngry ? 12f : 6f;
+        agent.speed = chef.isAngry ? agentRunSpeed : agentWalkSpeed; //to set navmeshagent speed to the bigger speed to chase after the player when its angry
         return chef.isAngry;
     }
 
     [Task]
     void ExitAngry()
     {
-        chefsGold.SetActive(true);
+        chefsGold.SetActive(true); //activate the gold again
         chef.isAngry = false;
         ThisTask.Succeed();
     }
