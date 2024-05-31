@@ -30,11 +30,10 @@ public class ChefAgentTasks : MonoBehaviour
     [Task]
     void GoTo(string tag)
     {
-        //abort going if its angry after chasing the player or going baco to table
-        if (chef.isAngry && !(tag.Equals("Player") || tag.Equals("Table"))) 
+        //abort going if its angry after chasing the player or going back to table
+        if (chef.isAngry && !(tag.Equals("Player") || tag.Equals("Table") || tag.Equals("Trash") || tag.Equals("Stove"))) 
         {
             ThisTask.Succeed();
-            return;
         }
 
         Transform target = GameObject.FindGameObjectWithTag(tag).transform;
@@ -146,10 +145,16 @@ public class ChefAgentTasks : MonoBehaviour
     void Cook()
     {
         chef.isCooking = true;
-        if (chef.cookingTime >= 100f || chef.isAngry)
+        if (chef.cookingTime >= 100f)
         {
             chef.cookingTime = 0f;
             chef.isCooking = false;
+            if (chef.isAngry)
+            {
+                ThisTask.Fail();
+                return;
+            }
+
             ThisTask.Succeed();
         }
     }
@@ -214,5 +219,11 @@ public class ChefAgentTasks : MonoBehaviour
         chefsGold.SetActive(true);
         chef.isAngry = false;
         ThisTask.Succeed();
+    }
+
+    [Task]
+    bool IsFoodBurnt()
+    {
+        return chef.isFoodBurnt;
     }
 }

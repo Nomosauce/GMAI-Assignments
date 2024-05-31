@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class ChefController : MonoBehaviour
 {
     public bool isInQuest = false;
     public bool questIsDone = false;
-    public bool isPreparingOrder = false;
-    public bool isCooking = false;
+    
     public bool isAngry = false;
 
     public GameObject monster;
@@ -21,23 +21,30 @@ public class ChefController : MonoBehaviour
     public int meatLeft = 0;
     public int meatStockIndex = 0;
 
-    public  float cookingTime = 0f;
+    [Header("Making Food")]
+    public bool isPreparingOrder = false;
+    public bool isCooking = false;
+    public bool isFoodBurnt = false;
+
+    public float cookingTime = 0f;
+    public float cookingSpeed = 15f;
+
+    public int burntChance = 3;
 
     // Start is called before the first frame update
     void Start()
     {
         monster.SetActive(false); //as i rather have the monster exist only within the quest, he is first set to false
 
-        cropStock = GameObject.FindGameObjectsWithTag("Crop"); //fill the crop and meat arrays with all game objects that have that tag
+        cropStock = GameObject.FindGameObjectsWithTag("Crop");
+        meatStock = GameObject.FindGameObjectsWithTag("Meat"); 
+        //fill the crop and meat arrays with all game objects that have that tag
         foreach (var item in cropStock) //run through each element in these arrays to increade the count of the tagged gameobjects that are in the scene, to prevent mistakes from hardcoding
         {
             cropsLeft++;
         }
-        meatStock = GameObject.FindGameObjectsWithTag("Meat");
-        foreach (var item in meatStock)
-        {
-            meatLeft++;
-        }
+
+        meatLeft = meatStock.Length;
     }
 
     void Update()
@@ -53,11 +60,13 @@ public class ChefController : MonoBehaviour
 
         if (isCooking) //as long as it is cooking, it will continuely increment by 15 until it first reaches 100, where the cookingtime will remain 100 and is returned to be used in the BT
         {
-            cookingTime += 15f * Time.deltaTime;
-            if (cookingTime >= 100f)
+            cookingTime += cookingSpeed * Time.deltaTime;
+
+            if (cookingTime >= 100f || isAngry)
             {
                 cookingTime = 100f;
-                return;
+                if (!isAngry) return;
+                isFoodBurnt = Random.Range(0, 10) <= burntChance ? true : false;
             }
         }
 

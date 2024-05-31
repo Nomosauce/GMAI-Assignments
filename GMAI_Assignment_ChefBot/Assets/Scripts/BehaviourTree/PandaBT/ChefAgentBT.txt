@@ -10,8 +10,13 @@ tree("Angry")
 	sequence
 		IsAngry
 		GoTo("Player")
+		fallback
+			sequence
+				IsFoodBurnt
+				GoTo("Stove")
+				GoTo("Trash")
+			Succeed
 		GoTo("Table")
-		//Wait 5.0
 		ExitAngry
 
 tree("Quest")

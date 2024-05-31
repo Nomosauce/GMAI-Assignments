@@ -640,7 +640,7 @@ GameObject:
   - component: {fileID: 242267398}
   m_Layer: 0
   m_Name: Trash
-  m_TagString: Untagged
+  m_TagString: Trash
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1831,8 +1831,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isInQuest: 0
   questIsDone: 0
-  isPreparingOrder: 0
-  isCooking: 0
   isAngry: 0
   monster: {fileID: 1658611909}
   cropStock: []
@@ -1842,7 +1840,12 @@ MonoBehaviour:
   cropStockIndex: 0
   meatLeft: 0
   meatStockIndex: 0
+  isPreparingOrder: 0
+  isCooking: 0
+  isFoodBurnt: 0
   cookingTime: 0
+  cookingSpeed: 15
+  burntChance: 3
 --- !u!114 &1020735821
 MonoBehaviour:
   m_ObjectHideFlags: 0

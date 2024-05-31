@@ -15,6 +15,7 @@ TagManager:
   - Meat
   - Animals
   - Table
+  - Trash
   layers:
   - Default
   - TransparentFX
