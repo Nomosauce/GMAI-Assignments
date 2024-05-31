@@ -13,6 +13,7 @@ tree("Angry")
 		fallback
 			sequence
 				IsFoodBurnt
+				DebugLog("Food is Burnt")
 				GoTo("Stove")
 				GoTo("Trash")
 			Succeed
@@ -32,36 +33,33 @@ tree("Quest")
 tree("PrepareOrder")
 	sequence
 		IsPreparingOrder
-		tree("TakeCrop")
-		tree("TakeMeat")
+		tree("HarvestCrop")
+		tree("HarvestMeat")
+		GoTo("Crop")
+		TakeCrop
+		GoTo("Meat")
+		TakeMeat
+		GoTo("Stove")
 		Cook
 		GoTo("Table")
 		GoTo("Counter")
 		EndOrder
 
-tree("TakeCrop")
-	sequence
-		fallback
-			sequence
-				not HasCrops
-				GoTo("CropHarvest")
-				HarvestCrops
-			Succeed
-		GoTo("Crop")
-		TakeCrop
-		GoTo("Stove")
+tree("HarvestCrop")
+	fallback
+		sequence
+			not HasCrops
+			GoTo("CropHarvest")
+			HarvestCrops
+		Succeed
 
-tree("TakeMeat")
-	sequence
-		fallback
-			sequence
-				not HasMeat
-				GoTo("Animals")
-				HarvestMeat
-			Succeed
-		GoTo("Meat")
-		TakeMeat
-		GoTo("Stove")
+tree("HarvestMeat")
+	fallback
+		sequence
+			not HasMeat
+			GoTo("Animals")
+			HarvestMeat
+		Succeed
 
 tree("Approach")
 	sequence
